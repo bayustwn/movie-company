@@ -1,97 +1,44 @@
-import { createSwaggerSpec } from "next-swagger-doc";
+import { OpenAPIRegistry, OpenApiGeneratorV3 } from "@asteasolutions/zod-to-openapi";
+import { z } from "@/lib/zod-openapi";
 
-export const getApiDocs = async () => {
-    const spec = createSwaggerSpec({
-        apiFolder: "src/app/api",
-        definition: {
-            openapi: "3.0.0",
-            info: {
-                title: "Cinema Ticket API",
-                version: "1.0.0",
-                description: "API documentation for Cinema Ticket Booking System",
-            },
-            servers: [
-                {
-                    url: "http://localhost:3000",
-                    description: "Development server",
-                },
-            ],
-            components: {
-                securitySchemes: {
-                    bearerAuth: {
-                        type: "http",
-                        scheme: "bearer",
-                        bearerFormat: "JWT",
-                    },
-                },
-                schemas: {
-                    User: {
-                        type: "object",
-                        properties: {
-                            id: { type: "string" },
-                            email: { type: "string", format: "email" },
-                            name: { type: "string" },
-                            role: { type: "string", enum: ["ADMIN", "STAFF"] },
-                            createdAt: { type: "string", format: "date-time" },
-                            updatedAt: { type: "string", format: "date-time" },
-                        },
-                    },
-                    LoginRequest: {
-                        type: "object",
-                        required: ["email", "password"],
-                        properties: {
-                            email: { type: "string", format: "email", example: "admin@cinema.com" },
-                            password: { type: "string", example: "admin123" },
-                            rememberMe: { type: "boolean", default: false },
-                        },
-                    },
-                    LoginResponse: {
-                        type: "object",
-                        properties: {
-                            message: { type: "string" },
-                            user: { $ref: "#/components/schemas/User" },
-                            accessToken: { type: "string" },
-                            refreshToken: { type: "string" },
-                        },
-                    },
-                    RegisterRequest: {
-                        type: "object",
-                        required: ["email", "password", "name"],
-                        properties: {
-                            email: { type: "string", format: "email" },
-                            password: { type: "string", minLength: 6 },
-                            name: { type: "string" },
-                            role: { type: "string", enum: ["ADMIN", "STAFF"] },
-                        },
-                    },
-                    RefreshRequest: {
-                        type: "object",
-                        required: ["refreshToken"],
-                        properties: {
-                            refreshToken: { type: "string" },
-                            rememberMe: { type: "boolean", default: false },
-                        },
-                    },
-                    TokenResponse: {
-                        type: "object",
-                        properties: {
-                            message: { type: "string" },
-                            accessToken: { type: "string" },
-                            refreshToken: { type: "string" },
-                        },
-                    },
-                    Error: {
-                        type: "object",
-                        properties: {
-                            error: { type: "string" },
-                        },
-                    },
-                },
-            },
-            tags: [
-                { name: "Auth", description: "Authentication endpoints" },
-            ],
-        },
+export const registry = new OpenAPIRegistry();
+
+export function registerSchema(name: string, schema: any) {
+    registry.register(name, schema);
+}
+
+export function generateOpenApiDocs() {
+    registry.registerComponent("securitySchemes", "bearerAuth", {
+        type: "http",
+        scheme: "bearer",
+        bearerFormat: "JWT",
+        description: "Enter your JWT access token",
     });
-    return spec;
-};
+
+    const generator = new OpenApiGeneratorV3(registry.definitions);
+
+    return generator.generateDocument({
+        openapi: "3.0.0",
+        info: {
+            title: "Cinema Ticket Booking API",
+            version: "1.0.0",
+            description: "REST API for cinema ticket booking system",
+        },
+        servers: [
+            {
+                url: "/api",
+                description: "API Base URL",
+            },
+        ],
+        tags: [
+            {
+                name: "Authentication",
+                description: "User authentication and token management",
+            },
+            {
+                name: "Staff Management",
+                description: "Staff CRUD operations (Admin only)",
+            },
+        ],
+    });
+}
