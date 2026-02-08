@@ -1,45 +1,36 @@
-import { NextRequest, NextResponse } from "next/server";
-import { authenticate } from "@/middlewares/auth-helpers";
-import { requireRole } from "@/middlewares/role.middleware";
-import { handleError, ServiceError } from "@/core/errors";
-import { apiResponse } from "@/core/response";
+import { NextRequest } from "next/server";
+import { withPermission } from "@/middlewares/with-permission";
+import { ok } from "@/lib/response-helpers";
+import { PERMISSIONS } from "@/core";
+import { ServiceError } from "@/core/errors";
 import * as movieService from "@/features/movies/movies.service";
+import { fileUploadSchema } from "@/features/movies/movies.validator";
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
-const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
-
-export async function POST(
-    request: NextRequest,
-    { params }: { params: Promise<{ id: string }> }
-) {
-    try {
-        const authResult = await authenticate(request);
-        if (authResult instanceof NextResponse) return authResult;
-
-        const roleCheck = requireRole(authResult.user, ["ADMIN"]);
-        if (roleCheck instanceof NextResponse) return roleCheck;
-
+export const POST = withPermission(
+    PERMISSIONS.MOVIES.UPDATE,
+    async (request, { params }) => {
         const { id } = await params;
         const formData = await request.formData();
-        const file = formData.get("poster") as File;
+        const poster = formData.get("poster");
 
-        if (!file) {
+        if (!poster || !(poster instanceof File)) {
             throw new ServiceError("Poster file is required", 400);
         }
 
-        if (file.size > MAX_FILE_SIZE) {
-            throw new ServiceError("File size must be less than 5MB", 400);
+        const result = fileUploadSchema.safeParse({ poster });
+        if (!result.success) {
+            const errors: Record<string, string[]> = {};
+            result.error.issues.forEach((err) => {
+                const path = err.path.join(".");
+                if (!errors[path]) errors[path] = [];
+                errors[path].push(err.message);
+            });
+            throw new ServiceError("File validation failed", 400, errors);
         }
 
-        if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
-            throw new ServiceError("File must be JPEG, PNG, or WebP", 400);
-        }
-
-        const buffer = Buffer.from(await file.arrayBuffer());
+        const buffer = Buffer.from(await poster.arrayBuffer());
         const movie = await movieService.uploadMoviePoster(id, buffer);
 
-        return NextResponse.json(apiResponse(movie, "Poster uploaded successfully"));
-    } catch (error) {
-        return handleError(error);
+        return ok(movie, "Poster uploaded successfully");
     }
-}
+);

@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { ServiceError } from "@/core/errors";
 import { uploadImage, deleteImage } from "@/lib/cloudinary";
+import { createFilterBuilder, addArrayHasFilter, addArrayHasSomeFilter, addEnumFilter, addBooleanFilter, addDateRangeFilter, addNumberRangeFilter, addSearchFilter, getWhere } from "@/lib/filter-builder";
 import type { CreateMovieDto, UpdateMovieDto, MovieFilterDto } from "./dto/movie.dto";
 import type { PaginationDto } from "@/core/dto/pagination.dto";
 
@@ -26,28 +27,43 @@ export async function getMovies(
     pagination: PaginationDto
 ) {
     const { page, limit, sortBy = "createdAt", sortOrder } = pagination;
-    const { genre, rating, isActive, search } = filters;
+    const {
+        genre,
+        genres,
+        rating,
+        isActive,
+        search,
+        releaseDateFrom,
+        releaseDateTo,
+        durationMin,
+        durationMax
+    } = filters;
 
-    const where: any = {};
+    const builder = createFilterBuilder();
 
-    if (genre) {
-        where.genre = { has: genre };
+    addArrayHasFilter(builder, "genre", genre);
+
+    if (genres) {
+        const genreList = genres.split(",").map(g => g.trim());
+        addArrayHasSomeFilter(builder, "genre", genreList);
     }
 
-    if (rating) {
-        where.rating = rating;
-    }
+    addEnumFilter(builder, "rating", rating);
+    addBooleanFilter(builder, "isActive", isActive);
 
-    if (isActive !== undefined) {
-        where.isActive = isActive;
-    }
+    addDateRangeFilter(builder, "releaseDate", {
+        from: releaseDateFrom,
+        to: releaseDateTo
+    });
 
-    if (search) {
-        where.OR = [
-            { title: { contains: search, mode: "insensitive" } },
-            { description: { contains: search, mode: "insensitive" } },
-        ];
-    }
+    addNumberRangeFilter(builder, "duration", {
+        min: durationMin,
+        max: durationMax
+    });
+
+    addSearchFilter(builder, ["title", "description"], search);
+
+    const where = getWhere(builder);
 
     const [movies, total] = await Promise.all([
         prisma.movie.findMany({

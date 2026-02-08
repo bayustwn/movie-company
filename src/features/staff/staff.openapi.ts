@@ -1,7 +1,8 @@
 import { registry } from "@/lib/swagger";
 import { z } from "zod";
-import { CreateStaffDto, UpdateStaffDto, StaffResponseDto } from "./dto/staff.dto";
+import { CreateStaffDto, UpdateStaffDto, StaffResponseDto, StaffFilterDto } from "./dto/staff.dto";
 import { ApiResponseDto, ErrorResponseDto, ValidationErrorResponseDto } from "@/core/dto/common.dto";
+import { PaginationDto, PaginatedResponseDto } from "@/core/dto/pagination.dto";
 
 registry.register("CreateStaffDto", CreateStaffDto);
 registry.register("UpdateStaffDto", UpdateStaffDto);
@@ -12,14 +13,35 @@ registry.registerPath({
     path: "/staff",
     tags: ["Staff Management"],
     summary: "List all staff",
-    description: "Retrieve a list of all staff members. Requires ADMIN role.",
+    description: "Retrieve a paginated list of staff members with filters. Requires ADMIN role.",
     security: [{ bearerAuth: [] }],
+    request: {
+        query: z.object({
+            page: PaginationDto.shape.page,
+            limit: PaginationDto.shape.limit,
+            sortBy: PaginationDto.shape.sortBy,
+            sortOrder: PaginationDto.shape.sortOrder,
+            role: StaffFilterDto.shape.role,
+            search: StaffFilterDto.shape.search,
+        }),
+    },
     responses: {
         200: {
             description: "Staff list retrieved successfully",
             content: {
                 "application/json": {
-                    schema: ApiResponseDto(z.array(StaffResponseDto)),
+                    schema: z.object({
+                        success: z.boolean(),
+                        data: z.object({
+                            data: z.array(StaffResponseDto),
+                            pagination: z.object({
+                                page: z.number(),
+                                limit: z.number(),
+                                total: z.number(),
+                                totalPages: z.number(),
+                            }),
+                        }),
+                    }),
                 },
             },
         },

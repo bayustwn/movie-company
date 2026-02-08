@@ -1,14 +1,46 @@
 import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/lib/auth";
+import { createFilterBuilder, addEnumFilter, addSearchFilter, getWhere } from "@/lib/filter-builder";
 import { CreateStaffInput, UpdateStaffInput } from "./staff.validator";
 import { UserResponse, USER_SELECT, ServiceError } from "@/core";
+import type { PaginationDto } from "@/core/dto/pagination.dto";
+import type { StaffFilterDto } from "./dto/staff-filter.dto";
 
 export const staffService = {
-    async getAll(): Promise<UserResponse[]> {
-        return prisma.user.findMany({
-            select: USER_SELECT,
-            orderBy: { createdAt: "desc" },
-        });
+    async getAll(
+        filters: StaffFilterDto,
+        pagination: PaginationDto
+    ): Promise<{ staff: UserResponse[], pagination: { page: number, limit: number, total: number, totalPages: number } }> {
+        const { page, limit, sortBy = "createdAt", sortOrder } = pagination;
+        const { role, search } = filters;
+
+        const builder = createFilterBuilder();
+
+        addEnumFilter(builder, "role", role);
+        addSearchFilter(builder, ["name", "email"], search);
+
+        const where = getWhere(builder);
+
+        const [staff, total] = await Promise.all([
+            prisma.user.findMany({
+                where,
+                select: USER_SELECT,
+                skip: (page - 1) * limit,
+                take: limit,
+                orderBy: { [sortBy]: sortOrder },
+            }),
+            prisma.user.count({ where }),
+        ]);
+
+        return {
+            staff,
+            pagination: {
+                page,
+                limit,
+                total,
+                totalPages: Math.ceil(total / limit),
+            },
+        };
     },
 
     async getById(id: string): Promise<UserResponse> {

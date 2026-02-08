@@ -1,5 +1,6 @@
 import { z } from "@/lib/zod-openapi";
 import { UserDto } from "@/core/dto/common.dto";
+export * from "./staff-filter.dto";
 
 export const CreateStaffDto = z.object({
     email: z.string().email().openapi({

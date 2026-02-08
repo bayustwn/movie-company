@@ -83,7 +83,11 @@ export type MovieResponseDto = z.infer<typeof MovieResponseDto>;
 export const MovieFilterDto = z.object({
     genre: z.string().optional().openapi({
         example: "Action",
-        description: "Filter by genre"
+        description: "Filter by single genre"
+    }),
+    genres: z.string().optional().openapi({
+        example: "Action,Sci-Fi",
+        description: "Filter by multiple genres (comma-separated, OR condition)"
     }),
     rating: z.enum(RATINGS).optional().openapi({
         example: "PG-13",
@@ -96,6 +100,22 @@ export const MovieFilterDto = z.object({
     search: z.string().optional().openapi({
         example: "Matrix",
         description: "Search in title and description"
+    }),
+    releaseDateFrom: z.coerce.date().optional().openapi({
+        example: "2020-01-01",
+        description: "Filter movies released on or after this date"
+    }),
+    releaseDateTo: z.coerce.date().optional().openapi({
+        example: "2024-12-31",
+        description: "Filter movies released on or before this date"
+    }),
+    durationMin: z.coerce.number().int().positive().optional().openapi({
+        example: 90,
+        description: "Minimum duration in minutes"
+    }),
+    durationMax: z.coerce.number().int().positive().optional().openapi({
+        example: 180,
+        description: "Maximum duration in minutes"
     }),
 });
 

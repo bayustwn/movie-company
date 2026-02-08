@@ -13,7 +13,7 @@ registry.registerPath({
     path: "/movies",
     tags: ["Movies"],
     summary: "List all movies",
-    description: "Retrieve a paginated list of movies with optional filters.",
+    description: "Retrieve a paginated list of movies with advanced filters including date range, duration range, multiple genres, and search.",
     request: {
         query: z.object({
             page: PaginationDto.shape.page,
@@ -21,9 +21,14 @@ registry.registerPath({
             sortBy: PaginationDto.shape.sortBy,
             sortOrder: PaginationDto.shape.sortOrder,
             genre: MovieFilterDto.shape.genre,
+            genres: MovieFilterDto.shape.genres,
             rating: MovieFilterDto.shape.rating,
             isActive: MovieFilterDto.shape.isActive,
             search: MovieFilterDto.shape.search,
+            releaseDateFrom: MovieFilterDto.shape.releaseDateFrom,
+            releaseDateTo: MovieFilterDto.shape.releaseDateTo,
+            durationMin: MovieFilterDto.shape.durationMin,
+            durationMax: MovieFilterDto.shape.durationMax,
         }),
     },
     responses: {

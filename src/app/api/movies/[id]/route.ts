@@ -1,9 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
-import { authenticate } from "@/middlewares/auth-helpers";
-import { requireRole } from "@/middlewares/role.middleware";
+import { withPermission } from "@/middlewares/with-permission";
+import { ok } from "@/lib/response-helpers";
 import { validateRequest } from "@/lib/validator";
-import { handleError } from "@/core/errors";
-import { apiResponse } from "@/core/response";
+import { handleError, PERMISSIONS } from "@/core";
 import * as movieService from "@/features/movies/movies.service";
 import { updateMovieSchema } from "@/features/movies/movies.validator";
 
@@ -14,51 +13,31 @@ export async function GET(
     try {
         const { id } = await params;
         const movie = await movieService.getMovieById(id);
-        return NextResponse.json(apiResponse(movie));
+        return ok(movie);
     } catch (error) {
         return handleError(error);
     }
 }
 
-export async function PATCH(
-    request: NextRequest,
-    { params }: { params: Promise<{ id: string }> }
-) {
-    try {
-        const authResult = await authenticate(request);
-        if (authResult instanceof NextResponse) return authResult;
-
-        const roleCheck = requireRole(authResult.user, ["ADMIN"]);
-        if (roleCheck instanceof NextResponse) return roleCheck;
-
+export const PATCH = withPermission(
+    PERMISSIONS.MOVIES.UPDATE,
+    async (request, { params }) => {
         const { id } = await params;
         const body = await request.json();
         const data = validateRequest(updateMovieSchema, body);
 
         const movie = await movieService.updateMovie(id, data);
 
-        return NextResponse.json(apiResponse(movie, "Movie updated successfully"));
-    } catch (error) {
-        return handleError(error);
+        return ok(movie, "Movie updated successfully");
     }
-}
+);
 
-export async function DELETE(
-    request: NextRequest,
-    { params }: { params: Promise<{ id: string }> }
-) {
-    try {
-        const authResult = await authenticate(request);
-        if (authResult instanceof NextResponse) return authResult;
-
-        const roleCheck = requireRole(authResult.user, ["ADMIN"]);
-        if (roleCheck instanceof NextResponse) return roleCheck;
-
+export const DELETE = withPermission(
+    PERMISSIONS.MOVIES.DELETE,
+    async (request, { params }) => {
         const { id } = await params;
         await movieService.deleteMovie(id);
 
-        return NextResponse.json(apiResponse(null, "Movie deleted successfully"));
-    } catch (error) {
-        return handleError(error);
+        return ok(null, "Movie deleted successfully");
     }
-}
+);

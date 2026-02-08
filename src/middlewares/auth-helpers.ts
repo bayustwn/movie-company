@@ -1,9 +1,8 @@
 import { NextResponse } from "next/server";
-import { errorResponse, JwtPayload } from "@/core";
+import { errorResponse } from "@/core";
+import type { AuthResult } from "./types/auth.types";
 
-export interface AuthResult {
-    user: JwtPayload;
-}
+export type { AuthResult };
 
 export async function authenticate(request: Request): Promise<AuthResult | NextResponse> {
     const authHeader = request.headers.get("authorization");
