@@ -12,6 +12,8 @@ const envSchema = z.object({
     BCRYPT_SALT_ROUNDS: z.string().optional().default("12"),
     BCRYPT_TOKEN_SALT_ROUNDS: z.string().optional().default("10"),
 
+    CLOUDINARY_URL: z.string().min(1, "CLOUDINARY_URL is required"),
+
     CORS_ORIGINS: z.string().optional().default("*"),
     NODE_ENV: z.enum(["development", "production", "test"]).optional().default("development"),
 });

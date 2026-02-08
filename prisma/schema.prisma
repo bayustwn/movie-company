@@ -7,14 +7,13 @@ datasource db {
   provider = "postgresql"
 }
 
-// === AUTH ===
 model User {
   id           String   @id @default(cuid())
   email        String   @unique
   password     String
   name         String
   role         Role     @default(STAFF)
-  refreshToken String?  // Store hashed refresh token
+  refreshToken String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
@@ -22,4 +21,22 @@ model User {
 enum Role {
   ADMIN
   STAFF
+}
+
+model Movie {
+  id             String   @id @default(cuid())
+  title          String
+  description    String   @db.Text
+  genre          String[]
+  duration       Int
+  rating         String
+  releaseDate    DateTime
+  posterUrl      String?
+  posterPublicId String?
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([isActive])
+  @@index([releaseDate])
 }

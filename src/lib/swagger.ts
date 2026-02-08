@@ -39,6 +39,10 @@ export function generateOpenApiDocs() {
                 name: "Staff Management",
                 description: "Staff CRUD operations (Admin only)",
             },
+            {
+                name: "Movies",
+                description: "Movie management with poster uploads (Admin only)",
+            },
         ],
     });
 }

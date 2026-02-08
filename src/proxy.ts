@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { handleCorsPrelight, withCors } from "./middlewares/cors.middleware";
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
     const corsPreflightResponse = handleCorsPrelight(request);
     if (corsPreflightResponse) {
         return corsPreflightResponse;

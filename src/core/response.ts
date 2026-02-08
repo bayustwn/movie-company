@@ -16,6 +16,17 @@ export function successResponse<T>(
     );
 }
 
+export function apiResponse<T>(
+    data: T,
+    message?: string
+) {
+    return {
+        success: true,
+        message,
+        data,
+    };
+}
+
 export function errorResponse(
     error: string,
     status: number = 400,

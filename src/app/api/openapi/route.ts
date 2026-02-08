@@ -3,6 +3,7 @@ import { NextResponse } from "next/server";
 
 import "@/features/auth/auth.openapi";
 import "@/features/staff/staff.openapi";
+import "@/features/movies/movies.openapi";
 
 export async function GET() {
     const spec = generateOpenApiDocs();
