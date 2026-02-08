@@ -1,8 +1,7 @@
 @import "tailwindcss";
-@plugin "../../hero.ts";
 
+@source "../../src/**/*.{js,ts,jsx,tsx}";
 @source "../../node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}";
-@source "../../node_modules/@heroui/react/node_modules/@heroui/theme/dist/**/*.{js,ts,jsx,tsx}";
 
 @theme {
     --color-cinema-red: #a81b23;
@@ -11,9 +10,11 @@
     --color-cinema-gold: #c5a059;
 }
 
+/* @plugin "../../hero.ts"; */
+
 @custom-variant dark (&:is(.dark *));
 
-@utility bg-grid-pattern {
+/* @utility bg-grid-pattern {
     background-image: linear-gradient(to right, white 1px, transparent 1px), linear-gradient(to bottom, white 1px, transparent 1px);
     background-size: 3rem 3rem;
-}
+} */
