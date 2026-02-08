@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { handleCorsPrelight, withCors } from "./middleware/cors.middleware";
+import { handleCorsPrelight, withCors } from "./middlewares/cors.middleware";
 
 export function middleware(request: NextRequest) {
     const corsPreflightResponse = handleCorsPrelight(request);

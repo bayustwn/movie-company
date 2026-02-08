@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { authService, loginSchema, formatZodErrors } from "@/features/auth";
 import { ServiceError, successResponse, validationErrorResponse, errorResponse, serverErrorResponse } from "@/core";
-import { authRateLimiter } from "@/middleware/rate-limiter.middleware";
+import { authRateLimiter } from "@/middlewares/rate-limiter.middleware";
 import { logger } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {

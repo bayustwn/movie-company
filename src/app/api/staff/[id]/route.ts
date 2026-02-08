@@ -1,7 +1,7 @@
 import { NextRequest } from "next/server";
 import { staffService, updateStaffSchema } from "@/features/staff";
 import { formatZodErrors } from "@/features/auth";
-import { createProtectedHandler, AuthenticatedRequest } from "@/middleware/auth.middleware";
+import { createProtectedHandler, AuthenticatedRequest } from "@/middlewares/auth.middleware";
 import { UserResponse, ServiceError, successResponse, validationErrorResponse, errorResponse, serverErrorResponse } from "@/core";
 
 interface RouteParams {
