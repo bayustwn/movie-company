@@ -1,18 +1,9 @@
 import { NextRequest } from "next/server";
+import { withAuth } from "@/middlewares/with-permission";
+import { ok } from "@/lib/response-helpers";
 import { authService } from "@/features/auth";
-import { withAuth, AuthenticatedRequest } from "@/middlewares/auth.middleware";
-import { ServiceError, successResponse, errorResponse, serverErrorResponse } from "@/core";
 
-export async function GET(request: NextRequest) {
-    return withAuth(request, async (authReq: AuthenticatedRequest) => {
-        try {
-            const user = await authService.getUserById(authReq.user.userId);
-            return successResponse({ user });
-        } catch (error) {
-            if (error instanceof ServiceError) {
-                return errorResponse(error.message, error.statusCode);
-            }
-            return serverErrorResponse(error as Error);
-        }
-    });
-}
+export const GET = withAuth(async (request, context, user) => {
+    const userData = await authService.getUserById(user.userId);
+    return ok({ user: userData });
+});

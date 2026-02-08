@@ -1,63 +1,38 @@
 import { NextRequest } from "next/server";
-import { staffService, createStaffSchema, StaffFilterDto } from "@/features/staff";
-import { formatZodErrors } from "@/features/auth";
-import { createProtectedHandler, AuthenticatedRequest } from "@/middlewares/auth.middleware";
-import { requirePermission } from "@/middlewares/permission.middleware";
+import { withPermission } from "@/middlewares/with-permission";
+import { parseFiltersAndPagination } from "@/lib/query-parser";
+import { ok, created, paginated } from "@/lib/response-helpers";
 import { validateRequest } from "@/lib/validator";
+import { handleError, PERMISSIONS } from "@/core";
+import { staffService, createStaffSchema, StaffFilterDto } from "@/features/staff";
 import { PaginationDto } from "@/core/dto/pagination.dto";
-import { UserResponse, ServiceError, successResponse, validationErrorResponse, errorResponse, serverErrorResponse, PERMISSIONS } from "@/core";
 
 const staffFilterSchema = StaffFilterDto;
 const paginationSchema = PaginationDto;
 
-export const GET = createProtectedHandler(
-    async (req: NextRequest) => {
-        try {
-            const { searchParams } = new URL(req.url);
+export const GET = withPermission(
+    PERMISSIONS.STAFF.READ,
+    async (request) => {
+        const { filters, pagination } = parseFiltersAndPagination(
+            request,
+            staffFilterSchema,
+            paginationSchema
+        );
 
-            const filters = validateRequest(staffFilterSchema, {
-                role: searchParams.get("role") || undefined,
-                search: searchParams.get("search") || undefined,
-            });
+        const result = await staffService.getAll(filters, pagination);
 
-            const pagination = validateRequest(paginationSchema, {
-                page: searchParams.get("page") || undefined,
-                limit: searchParams.get("limit") || undefined,
-                sortBy: searchParams.get("sortBy") || undefined,
-                sortOrder: searchParams.get("sortOrder") || undefined,
-            });
-
-            const result = await staffService.getAll(filters, pagination);
-
-            return successResponse({
-                data: result.staff,
-                pagination: result.pagination,
-            });
-        } catch (error) {
-            return serverErrorResponse(error as Error);
-        }
-    },
-    ["ADMIN"]
+        return paginated(result.staff, result.pagination);
+    }
 );
 
-export const POST = createProtectedHandler(
-    async (req: AuthenticatedRequest) => {
-        try {
-            const body = await req.json();
+export const POST = withPermission(
+    PERMISSIONS.STAFF.CREATE,
+    async (request) => {
+        const body = await request.json();
+        const data = validateRequest(createStaffSchema, body);
 
-            const result = createStaffSchema.safeParse(body);
-            if (!result.success) {
-                return validationErrorResponse(formatZodErrors(result.error));
-            }
+        const staff = await staffService.create(data);
 
-            const staff = await staffService.create(result.data);
-            return successResponse(staff, "Staff created successfully", 201);
-        } catch (error) {
-            if (error instanceof ServiceError) {
-                return errorResponse(error.message, error.statusCode);
-            }
-            return serverErrorResponse(error as Error);
-        }
-    },
-    ["ADMIN"]
+        return created(staff, "Staff created successfully");
+    }
 );

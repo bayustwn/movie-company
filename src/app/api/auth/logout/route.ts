@@ -1,18 +1,9 @@
 import { NextRequest } from "next/server";
+import { withAuth } from "@/middlewares/with-permission";
+import { ok } from "@/lib/response-helpers";
 import { authService } from "@/features/auth";
-import { withAuth, AuthenticatedRequest } from "@/middlewares/auth.middleware";
-import { ServiceError, successResponse, errorResponse, serverErrorResponse } from "@/core";
 
-export async function POST(request: NextRequest) {
-    return withAuth(request, async (authReq: AuthenticatedRequest) => {
-        try {
-            await authService.logout(authReq.user.userId);
-            return successResponse(null, "Logged out successfully");
-        } catch (error) {
-            if (error instanceof ServiceError) {
-                return errorResponse(error.message, error.statusCode);
-            }
-            return serverErrorResponse(error as Error);
-        }
-    });
-}
+export const POST = withAuth(async (request, context, user) => {
+    await authService.logout(user.userId);
+    return ok(null, "Logged out successfully");
+});

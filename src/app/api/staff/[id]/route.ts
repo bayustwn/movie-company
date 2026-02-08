@@ -1,82 +1,42 @@
 import { NextRequest } from "next/server";
+import { withPermission } from "@/middlewares/with-permission";
+import { ok } from "@/lib/response-helpers";
+import { validateRequest } from "@/lib/validator";
+import { handleError, PERMISSIONS } from "@/core";
 import { staffService, updateStaffSchema } from "@/features/staff";
-import { formatZodErrors } from "@/features/auth";
-import { createProtectedHandler, AuthenticatedRequest } from "@/middlewares/auth.middleware";
-import { UserResponse, ServiceError, successResponse, validationErrorResponse, errorResponse, serverErrorResponse } from "@/core";
 
 interface RouteParams {
     params: Promise<{ id: string }>;
 }
 
-export async function GET(
-    request: NextRequest,
-    { params }: RouteParams
-) {
-    const handler = createProtectedHandler(
-        async () => {
-            try {
-                const { id } = await params;
-                const staff = await staffService.getById(id);
-                return successResponse<UserResponse>(staff);
-            } catch (error) {
-                if (error instanceof ServiceError) {
-                    return errorResponse(error.message, error.statusCode);
-                }
-                return serverErrorResponse(error as Error);
-            }
-        },
-        ["ADMIN"]
-    );
-    return handler(request);
-}
+export const GET = withPermission(
+    PERMISSIONS.STAFF.READ,
+    async (request, { params }: RouteParams) => {
+        const { id } = await params;
+        const staff = await staffService.getById(id);
+        return ok(staff);
+    }
+);
 
-export async function PATCH(
-    request: NextRequest,
-    { params }: RouteParams
-) {
-    const handler = createProtectedHandler(
-        async (req: AuthenticatedRequest) => {
-            try {
-                const { id } = await params;
-                const body = await req.json();
+export const PATCH = withPermission(
+    PERMISSIONS.STAFF.UPDATE,
+    async (request, { params }: RouteParams) => {
+        const { id } = await params;
+        const body = await request.json();
+        const data = validateRequest(updateStaffSchema, body);
 
-                const result = updateStaffSchema.safeParse(body);
-                if (!result.success) {
-                    return validationErrorResponse(formatZodErrors(result.error));
-                }
+        const staff = await staffService.update(id, data);
 
-                const staff = await staffService.update(id, result.data);
-                return successResponse(staff, "Staff updated successfully");
-            } catch (error) {
-                if (error instanceof ServiceError) {
-                    return errorResponse(error.message, error.statusCode);
-                }
-                return serverErrorResponse(error as Error);
-            }
-        },
-        ["ADMIN"]
-    );
-    return handler(request);
-}
+        return ok(staff, "Staff updated successfully");
+    }
+);
 
-export async function DELETE(
-    request: NextRequest,
-    { params }: RouteParams
-) {
-    const handler = createProtectedHandler(
-        async () => {
-            try {
-                const { id } = await params;
-                await staffService.delete(id);
-                return successResponse(null, "Staff deleted successfully");
-            } catch (error) {
-                if (error instanceof ServiceError) {
-                    return errorResponse(error.message, error.statusCode);
-                }
-                return serverErrorResponse(error as Error);
-            }
-        },
-        ["ADMIN"]
-    );
-    return handler(request);
-}
+export const DELETE = withPermission(
+    PERMISSIONS.STAFF.DELETE,
+    async (request, { params }: RouteParams) => {
+        const { id } = await params;
+        await staffService.delete(id);
+
+        return ok(null, "Staff deleted successfully");
+    }
+);
