@@ -5,6 +5,7 @@ import "@/features/auth/auth.openapi";
 import "@/features/staff/staff.openapi";
 import "@/features/movies/movies.openapi";
 import "@/features/theaters/theaters.openapi";
+import "@/features/showtimes/showtimes.openapi";
 
 export async function GET() {
     const spec = generateOpenApiDocs();

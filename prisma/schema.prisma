@@ -24,18 +24,21 @@ enum Role {
 }
 
 model Movie {
-  id             String   @id @default(cuid())
+  id             String     @id @default(cuid())
   title          String
-  description    String   @db.Text
+  description    String     @db.Text
   genre          String[]
   duration       Int
   rating         String
   releaseDate    DateTime
   posterUrl      String?
   posterPublicId String?
-  isActive       Boolean  @default(true)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
+  isActive       Boolean    @default(true)
+  
+  showtimes      Showtime[]
+  
+  createdAt      DateTime   @default(now())
+  updatedAt      DateTime   @updatedAt
 
   @@index([isActive])
   @@index([releaseDate])
@@ -62,16 +65,38 @@ model Theater {
 }
 
 model Studio {
-  id        String   @id @default(cuid())
+  id        String     @id @default(cuid())
   name      String
   theaterId String
-  theater   Theater  @relation(fields: [theaterId], references: [id], onDelete: Cascade)
+  theater   Theater    @relation(fields: [theaterId], references: [id], onDelete: Cascade)
   
   capacity  Int
+  price     Int
+  
+  showtimes Showtime[]
+  
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  @@index([theaterId])
+}
+
+model Showtime {
+  id        String   @id @default(cuid())
+  movieId   String
+  movie     Movie    @relation(fields: [movieId], references: [id])
+  studioId  String
+  studio    Studio   @relation(fields: [studioId], references: [id], onDelete: Cascade)
+  
+  startTime DateTime
+  endTime   DateTime
   price     Int
   
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  @@index([theaterId])
+  @@index([movieId])
+  @@index([studioId])
+  @@index([startTime])
+  @@index([studioId, startTime])
 }
