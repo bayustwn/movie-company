@@ -40,3 +40,38 @@ model Movie {
   @@index([isActive])
   @@index([releaseDate])
 }
+
+model Theater {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  address   String   @db.Text
+  city      String
+  phone     String?
+  isActive  Boolean  @default(true)
+  
+  studios   Studio[]
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([city])
+  @@index([isActive])
+  @@index([slug])
+  @@index([city, isActive])
+}
+
+model Studio {
+  id        String   @id @default(cuid())
+  name      String
+  theaterId String
+  theater   Theater  @relation(fields: [theaterId], references: [id], onDelete: Cascade)
+  
+  capacity  Int
+  price     Int
+  
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([theaterId])
+}

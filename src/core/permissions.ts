@@ -9,6 +9,14 @@ export const PERMISSIONS = {
         MANAGE: "movies.manage",
     },
 
+    THEATERS: {
+        CREATE: "theaters.create",
+        READ: "theaters.read",
+        UPDATE: "theaters.update",
+        DELETE: "theaters.delete",
+        MANAGE: "theaters.manage",
+    },
+
     STAFF: {
         CREATE: "staff.create",
         READ: "staff.read",
@@ -37,6 +45,7 @@ export const ROLE_PERMISSIONS: Record<string, string[]> = {
 
     [ROLES.ADMIN]: [
         PERMISSIONS.MOVIES.MANAGE,
+        PERMISSIONS.THEATERS.MANAGE,
         PERMISSIONS.STAFF.MANAGE,
         PERMISSIONS.AUTH.LOGIN,
         PERMISSIONS.AUTH.LOGOUT,
@@ -47,6 +56,7 @@ export const ROLE_PERMISSIONS: Record<string, string[]> = {
     [ROLES.STAFF]: [
         PERMISSIONS.MOVIES.READ,
         PERMISSIONS.MOVIES.CREATE,
+        PERMISSIONS.THEATERS.READ,
         PERMISSIONS.STAFF.READ,
         PERMISSIONS.AUTH.LOGIN,
         PERMISSIONS.AUTH.LOGOUT,
@@ -56,6 +66,7 @@ export const ROLE_PERMISSIONS: Record<string, string[]> = {
 
     [ROLES.USER]: [
         PERMISSIONS.MOVIES.READ,
+        PERMISSIONS.THEATERS.READ,
         PERMISSIONS.AUTH.LOGIN,
         PERMISSIONS.AUTH.LOGOUT,
         PERMISSIONS.AUTH.REFRESH,
@@ -70,6 +81,11 @@ export type Permission =
     | typeof PERMISSIONS.MOVIES.UPDATE
     | typeof PERMISSIONS.MOVIES.DELETE
     | typeof PERMISSIONS.MOVIES.MANAGE
+    | typeof PERMISSIONS.THEATERS.CREATE
+    | typeof PERMISSIONS.THEATERS.READ
+    | typeof PERMISSIONS.THEATERS.UPDATE
+    | typeof PERMISSIONS.THEATERS.DELETE
+    | typeof PERMISSIONS.THEATERS.MANAGE
     | typeof PERMISSIONS.STAFF.CREATE
     | typeof PERMISSIONS.STAFF.READ
     | typeof PERMISSIONS.STAFF.UPDATE
@@ -80,4 +96,4 @@ export type Permission =
     | typeof PERMISSIONS.AUTH.REFRESH
     | typeof PERMISSIONS.AUTH.ME;
 
-export type Role = typeof ROLES[keyof typeof ROLES];
+export type Role = (typeof ROLES)[keyof typeof ROLES];
