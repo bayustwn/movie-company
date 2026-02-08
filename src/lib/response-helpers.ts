@@ -1,12 +1,12 @@
 import { NextResponse } from "next/server";
 
-export interface SuccessResponse<T = any> {
+export interface SuccessResponse<T = unknown> {
     success: true;
     data: T;
     message?: string;
 }
 
-export interface PaginatedResponse<T = any> {
+export interface PaginatedResponse<T = unknown> {
     success: true;
     data: T[];
     pagination: {

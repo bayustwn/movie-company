@@ -8,7 +8,7 @@ export function parseQueryParams<T extends z.ZodTypeAny>(
 ): z.infer<T> {
     const { searchParams } = new URL(request.url);
 
-    const params: Record<string, any> = {};
+    const params: Record<string, string | undefined> = {};
 
     searchParams.forEach((value, key) => {
         params[key] = value || undefined;
@@ -21,10 +21,10 @@ export function parseFiltersAndPagination<F extends z.ZodTypeAny, P extends z.Zo
     request: NextRequest,
     filterSchema: F,
     paginationSchema: P
-): { filters: z.infer<F>, pagination: z.infer<P> } {
+): { filters: z.infer<F>; pagination: z.infer<P> } {
     const { searchParams } = new URL(request.url);
 
-    const allParams: Record<string, any> = {};
+    const allParams: Record<string, string | undefined> = {};
     searchParams.forEach((value, key) => {
         allParams[key] = value || undefined;
     });

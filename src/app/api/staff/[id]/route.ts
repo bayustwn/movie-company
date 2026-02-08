@@ -1,26 +1,21 @@
-import { NextRequest } from "next/server";
 import { withPermission } from "@/middlewares/with-permission";
 import { ok } from "@/lib/response-helpers";
 import { validateRequest } from "@/lib/validator";
-import { handleError, PERMISSIONS } from "@/core";
+import { PERMISSIONS } from "@/core";
 import { staffService, updateStaffSchema } from "@/features/staff";
 
-interface RouteParams {
-    params: Promise<{ id: string }>;
-}
-
-export const GET = withPermission(
+export const GET = withPermission<{ params: Promise<{ id: string }> }>(
     PERMISSIONS.STAFF.READ,
-    async (request, { params }: RouteParams) => {
+    async (request, { params }) => {
         const { id } = await params;
         const staff = await staffService.getById(id);
         return ok(staff);
     }
 );
 
-export const PATCH = withPermission(
+export const PATCH = withPermission<{ params: Promise<{ id: string }> }>(
     PERMISSIONS.STAFF.UPDATE,
-    async (request, { params }: RouteParams) => {
+    async (request, { params }) => {
         const { id } = await params;
         const body = await request.json();
         const data = validateRequest(updateStaffSchema, body);
@@ -31,9 +26,9 @@ export const PATCH = withPermission(
     }
 );
 
-export const DELETE = withPermission(
+export const DELETE = withPermission<{ params: Promise<{ id: string }> }>(
     PERMISSIONS.STAFF.DELETE,
-    async (request, { params }: RouteParams) => {
+    async (request, { params }) => {
         const { id } = await params;
         await staffService.delete(id);
 

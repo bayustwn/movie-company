@@ -1,11 +1,15 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { withPermission } from "@/middlewares/with-permission";
 import { parseFiltersAndPagination } from "@/lib/query-parser";
-import { ok, created, paginated } from "@/lib/response-helpers";
+import { created, paginated } from "@/lib/response-helpers";
 import { validateRequest } from "@/lib/validator";
 import { handleError, PERMISSIONS } from "@/core";
 import * as movieService from "@/features/movies/movies.service";
-import { createMovieSchema, movieFilterSchema, paginationSchema } from "@/features/movies/movies.validator";
+import {
+    createMovieSchema,
+    movieFilterSchema,
+    paginationSchema,
+} from "@/features/movies/movies.validator";
 
 export async function GET(request: NextRequest) {
     try {
@@ -23,14 +27,11 @@ export async function GET(request: NextRequest) {
     }
 }
 
-export const POST = withPermission(
-    PERMISSIONS.MOVIES.CREATE,
-    async (request) => {
-        const body = await request.json();
-        const data = validateRequest(createMovieSchema, body);
+export const POST = withPermission(PERMISSIONS.MOVIES.CREATE, async (request) => {
+    const body = await request.json();
+    const data = validateRequest(createMovieSchema, body);
 
-        const movie = await movieService.createMovie(data);
+    const movie = await movieService.createMovie(data);
 
-        return created(movie, "Movie created successfully");
-    }
-);
+    return created(movie, "Movie created successfully");
+});

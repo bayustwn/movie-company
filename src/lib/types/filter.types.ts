@@ -9,5 +9,6 @@ export interface NumberRangeFilter {
 }
 
 export interface FilterBuilder {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     where: any;
 }

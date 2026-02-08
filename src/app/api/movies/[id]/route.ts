@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from "next/server";
+import { NextRequest } from "next/server";
 import { withPermission } from "@/middlewares/with-permission";
 import { ok } from "@/lib/response-helpers";
 import { validateRequest } from "@/lib/validator";
@@ -6,10 +6,7 @@ import { handleError, PERMISSIONS } from "@/core";
 import * as movieService from "@/features/movies/movies.service";
 import { updateMovieSchema } from "@/features/movies/movies.validator";
 
-export async function GET(
-    request: NextRequest,
-    { params }: { params: Promise<{ id: string }> }
-) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
     try {
         const { id } = await params;
         const movie = await movieService.getMovieById(id);
@@ -19,7 +16,7 @@ export async function GET(
     }
 }
 
-export const PATCH = withPermission(
+export const PATCH = withPermission<{ params: Promise<{ id: string }> }>(
     PERMISSIONS.MOVIES.UPDATE,
     async (request, { params }) => {
         const { id } = await params;
@@ -32,7 +29,7 @@ export const PATCH = withPermission(
     }
 );
 
-export const DELETE = withPermission(
+export const DELETE = withPermission<{ params: Promise<{ id: string }> }>(
     PERMISSIONS.MOVIES.DELETE,
     async (request, { params }) => {
         const { id } = await params;

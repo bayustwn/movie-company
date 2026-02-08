@@ -1,8 +1,8 @@
 import { OpenAPIRegistry, OpenApiGeneratorV3 } from "@asteasolutions/zod-to-openapi";
-import { z } from "@/lib/zod-openapi";
 
 export const registry = new OpenAPIRegistry();
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function registerSchema(name: string, schema: any) {
     registry.register(name, schema);
 }

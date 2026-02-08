@@ -25,7 +25,7 @@ export function addStringContainsFilter(
     if (value) {
         builder.where[field] = {
             contains: value,
-            mode: "insensitive"
+            mode: "insensitive",
         };
     }
     return builder;
@@ -115,16 +115,17 @@ export function addSearchFilter(
     value?: string
 ): FilterBuilder {
     if (value && fields.length > 0) {
-        builder.where.OR = fields.map(field => ({
+        builder.where.OR = fields.map((field) => ({
             [field]: {
                 contains: value,
-                mode: "insensitive"
-            }
+                mode: "insensitive",
+            },
         }));
     }
     return builder;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function getWhere(builder: FilterBuilder): any {
     return builder.where;
 }

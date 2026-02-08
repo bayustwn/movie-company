@@ -1,8 +1,12 @@
 import { registry } from "@/lib/swagger";
 import { z } from "zod";
 import { CreateStaffDto, UpdateStaffDto, StaffResponseDto, StaffFilterDto } from "./dto/staff.dto";
-import { ApiResponseDto, ErrorResponseDto, ValidationErrorResponseDto } from "@/core/dto/common.dto";
-import { PaginationDto, PaginatedResponseDto } from "@/core/dto/pagination.dto";
+import {
+    ApiResponseDto,
+    ErrorResponseDto,
+    ValidationErrorResponseDto,
+} from "@/core/dto/common.dto";
+import { PaginationDto } from "@/core/dto/pagination.dto";
 
 registry.register("CreateStaffDto", CreateStaffDto);
 registry.register("UpdateStaffDto", UpdateStaffDto);
@@ -119,7 +123,7 @@ registry.registerPath({
         params: z.object({
             id: z.string().openapi({
                 example: "cm5xabc123",
-                description: "Staff member ID"
+                description: "Staff member ID",
             }),
         }),
     },
@@ -154,7 +158,7 @@ registry.registerPath({
         params: z.object({
             id: z.string().openapi({
                 example: "cm5xabc123",
-                description: "Staff member ID"
+                description: "Staff member ID",
             }),
         }),
         body: {
@@ -212,7 +216,7 @@ registry.registerPath({
         params: z.object({
             id: z.string().openapi({
                 example: "cm5xabc123",
-                description: "Staff member ID"
+                description: "Staff member ID",
             }),
         }),
     },

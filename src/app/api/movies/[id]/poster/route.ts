@@ -1,4 +1,3 @@
-import { NextRequest } from "next/server";
 import { withPermission } from "@/middlewares/with-permission";
 import { ok } from "@/lib/response-helpers";
 import { PERMISSIONS } from "@/core";
@@ -6,7 +5,7 @@ import { ServiceError } from "@/core/errors";
 import * as movieService from "@/features/movies/movies.service";
 import { fileUploadSchema } from "@/features/movies/movies.validator";
 
-export const POST = withPermission(
+export const POST = withPermission<{ params: Promise<{ id: string }> }>(
     PERMISSIONS.MOVIES.UPDATE,
     async (request, { params }) => {
         const { id } = await params;

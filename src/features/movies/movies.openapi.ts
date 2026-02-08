@@ -1,7 +1,11 @@
 import { registry } from "@/lib/swagger";
 import { z } from "zod";
-import { CreateMovieDto, UpdateMovieDto, MovieResponseDto, MovieFilterDto, GENRES, RATINGS } from "./dto/movie.dto";
-import { ApiResponseDto, ErrorResponseDto, ValidationErrorResponseDto } from "@/core/dto/common.dto";
+import { CreateMovieDto, UpdateMovieDto, MovieResponseDto, MovieFilterDto } from "./dto/movie.dto";
+import {
+    ApiResponseDto,
+    ErrorResponseDto,
+    ValidationErrorResponseDto,
+} from "@/core/dto/common.dto";
 import { PaginationDto, PaginatedResponseDto } from "@/core/dto/pagination.dto";
 
 registry.register("CreateMovieDto", CreateMovieDto);
@@ -13,7 +17,8 @@ registry.registerPath({
     path: "/movies",
     tags: ["Movies"],
     summary: "List all movies",
-    description: "Retrieve a paginated list of movies with advanced filters including date range, duration range, multiple genres, and search.",
+    description:
+        "Retrieve a paginated list of movies with advanced filters including date range, duration range, multiple genres, and search.",
     request: {
         query: z.object({
             page: PaginationDto.shape.page,
@@ -113,7 +118,7 @@ registry.registerPath({
         params: z.object({
             id: z.string().openapi({
                 example: "cm5xabc123",
-                description: "Movie ID"
+                description: "Movie ID",
             }),
         }),
     },
@@ -148,7 +153,7 @@ registry.registerPath({
         params: z.object({
             id: z.string().openapi({
                 example: "cm5xabc123",
-                description: "Movie ID"
+                description: "Movie ID",
             }),
         }),
         body: {
@@ -222,7 +227,7 @@ registry.registerPath({
         params: z.object({
             id: z.string().openapi({
                 example: "cm5xabc123",
-                description: "Movie ID"
+                description: "Movie ID",
             }),
         }),
     },
@@ -267,13 +272,14 @@ registry.registerPath({
     path: "/movies/{id}/poster",
     tags: ["Movies"],
     summary: "Upload movie poster",
-    description: "Upload or replace movie poster image. Requires ADMIN role. Max size: 5MB. Accepted formats: JPEG, PNG, WebP.",
+    description:
+        "Upload or replace movie poster image. Requires ADMIN role. Max size: 5MB. Accepted formats: JPEG, PNG, WebP.",
     security: [{ bearerAuth: [] }],
     request: {
         params: z.object({
             id: z.string().openapi({
                 example: "cm5xabc123",
-                description: "Movie ID"
+                description: "Movie ID",
             }),
         }),
         body: {
@@ -283,7 +289,7 @@ registry.registerPath({
                         poster: z.string().openapi({
                             type: "string",
                             format: "binary",
-                            description: "Poster image file (JPEG, PNG, or WebP, max 5MB)"
+                            description: "Poster image file (JPEG, PNG, or WebP, max 5MB)",
                         }),
                     }),
                 },

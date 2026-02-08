@@ -1,14 +1,18 @@
 import { NextRequest, NextResponse } from "next/server";
 import { authenticate, AuthResult } from "./auth-helpers";
-import { requirePermission, requireAnyPermission, requireAllPermissions } from "./permission.middleware";
+import {
+    requirePermission,
+    requireAnyPermission,
+    requireAllPermissions,
+} from "./permission.middleware";
 import { handleError } from "@/core";
 import type { Permission } from "@/core/permissions";
 
-export interface AuthenticatedHandler<T = any> {
+export interface AuthenticatedHandler<T = unknown> {
     (request: NextRequest, context: T, user: AuthResult["user"]): Promise<NextResponse>;
 }
 
-export function withPermission<T = any>(
+export function withPermission<T = unknown>(
     permission: Permission,
     handler: AuthenticatedHandler<T>
 ) {
@@ -27,7 +31,7 @@ export function withPermission<T = any>(
     };
 }
 
-export function withAnyPermission<T = any>(
+export function withAnyPermission<T = unknown>(
     permissions: Permission[],
     handler: AuthenticatedHandler<T>
 ) {
@@ -46,7 +50,7 @@ export function withAnyPermission<T = any>(
     };
 }
 
-export function withAllPermissions<T = any>(
+export function withAllPermissions<T = unknown>(
     permissions: Permission[],
     handler: AuthenticatedHandler<T>
 ) {
@@ -65,9 +69,7 @@ export function withAllPermissions<T = any>(
     };
 }
 
-export function withAuth<T = any>(
-    handler: AuthenticatedHandler<T>
-) {
+export function withAuth<T = unknown>(handler: AuthenticatedHandler<T>) {
     return async (request: NextRequest, context: T) => {
         try {
             const authResult = await authenticate(request);

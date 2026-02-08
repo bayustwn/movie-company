@@ -1,3 +1,5 @@
+import { NextResponse } from "next/server";
+
 export class ServiceError extends Error {
     constructor(
         message: string,
@@ -10,8 +12,6 @@ export class ServiceError extends Error {
 }
 
 export function handleError(error: unknown) {
-    const { NextResponse } = require("next/server");
-
     if (error instanceof ServiceError) {
         return NextResponse.json(
             {
@@ -32,4 +32,3 @@ export function handleError(error: unknown) {
         { status: 500 }
     );
 }
-
