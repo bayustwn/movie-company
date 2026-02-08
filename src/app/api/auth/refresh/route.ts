@@ -1,9 +1,6 @@
 import { NextRequest } from "next/server";
-import { authService } from "@/services/auth.service";
-import { refreshSchema } from "@/validators/auth.validator";
-import { formatZodErrors } from "@/validators";
-import { ServiceError } from "@/types";
-import { successResponse, validationErrorResponse, errorResponse, serverErrorResponse } from "@/utils/response";
+import { authService, refreshSchema, formatZodErrors } from "@/features/auth";
+import { ServiceError, successResponse, validationErrorResponse, errorResponse, serverErrorResponse } from "@/core";
 
 export async function POST(request: NextRequest) {
     try {

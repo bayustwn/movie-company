@@ -1,20 +1,20 @@
 declare module "swagger-ui-react" {
-    import { FC } from "react";
+    import type { FC } from "react";
 
     interface SwaggerUIProps {
         url?: string;
         spec?: object;
+        layout?: string;
         docExpansion?: "list" | "full" | "none";
         defaultModelsExpandDepth?: number;
-        displayOperationId?: boolean;
+        defaultModelExpandDepth?: number;
         filter?: boolean | string;
+        maxDisplayedTags?: number;
         showExtensions?: boolean;
         showCommonExtensions?: boolean;
         supportedSubmitMethods?: string[];
         tryItOutEnabled?: boolean;
-        requestInterceptor?: (req: object) => object;
-        responseInterceptor?: (res: object) => object;
-        onComplete?: () => void;
+        validatorUrl?: string | null;
     }
 
     const SwaggerUI: FC<SwaggerUIProps>;

@@ -13,6 +13,26 @@ export interface AuthResponse {
     refreshToken: string;
 }
 
+export interface JwtPayload {
+    userId: string;
+    email: string;
+    role: string;
+    type: "access" | "refresh";
+}
+
+export interface TokenPair {
+    accessToken: string;
+    refreshToken: string;
+}
+
+export interface ApiResponse<T = unknown> {
+    success: boolean;
+    message?: string;
+    data?: T;
+    error?: string;
+    errors?: Record<string, string[]>;
+}
+
 export const USER_SELECT = {
     id: true,
     email: true,

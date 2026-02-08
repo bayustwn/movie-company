@@ -1,14 +1,7 @@
-import { staffService } from "@/services/staff.service";
-import { createStaffSchema } from "@/validators/staff.validator";
-import { formatZodErrors } from "@/validators";
+import { staffService, createStaffSchema } from "@/features/staff";
+import { formatZodErrors } from "@/features/auth";
 import { createProtectedHandler, AuthenticatedRequest } from "@/middleware/auth.middleware";
-import { UserResponse, ServiceError } from "@/types";
-import {
-    successResponse,
-    validationErrorResponse,
-    errorResponse,
-    serverErrorResponse
-} from "@/utils/response";
+import { UserResponse, ServiceError, successResponse, validationErrorResponse, errorResponse, serverErrorResponse } from "@/core";
 
 export const GET = createProtectedHandler(
     async () => {

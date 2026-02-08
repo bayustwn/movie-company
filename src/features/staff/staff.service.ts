@@ -1,7 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import { hashPassword } from "@/lib/auth";
-import { CreateStaffInput, UpdateStaffInput } from "@/validators/staff.validator";
-import { UserResponse, USER_SELECT, ServiceError } from "@/types";
+import { CreateStaffInput, UpdateStaffInput } from "./staff.validator";
+import { UserResponse, USER_SELECT, ServiceError } from "@/core";
 
 export const staffService = {
     async getAll(): Promise<UserResponse[]> {

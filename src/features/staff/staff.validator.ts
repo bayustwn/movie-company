@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { emailSchema, passwordSchema, nameSchema, roleSchema } from "./index";
+import { emailSchema, passwordSchema, nameSchema, roleSchema } from "../auth/auth.validator";
 
 export const createStaffSchema = z.object({
     email: emailSchema,

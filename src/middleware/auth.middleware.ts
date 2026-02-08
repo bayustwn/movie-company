@@ -1,7 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifyAccessToken } from "@/lib/auth";
-import { errorResponse } from "@/utils/response";
-import { JwtPayload } from "@/types";
+import { errorResponse, JwtPayload } from "@/core";
 
 export interface AuthenticatedRequest extends NextRequest {
     user: JwtPayload;

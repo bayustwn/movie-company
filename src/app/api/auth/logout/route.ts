@@ -1,8 +1,7 @@
 import { NextRequest } from "next/server";
-import { authService } from "@/services/auth.service";
+import { authService } from "@/features/auth";
 import { withAuth, AuthenticatedRequest } from "@/middleware/auth.middleware";
-import { ServiceError } from "@/types";
-import { successResponse, errorResponse, serverErrorResponse } from "@/utils/response";
+import { ServiceError, successResponse, errorResponse, serverErrorResponse } from "@/core";
 
 export async function POST(request: NextRequest) {
     return withAuth(request, async (authReq: AuthenticatedRequest) => {

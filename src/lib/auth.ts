@@ -1,7 +1,6 @@
 import jwt, { SignOptions } from "jsonwebtoken";
 import bcrypt from "bcryptjs";
-import { JWT_CONFIG, BCRYPT_SALT_ROUNDS, BCRYPT_TOKEN_SALT_ROUNDS } from "@/constants";
-import { JwtPayload, TokenPair } from "@/types";
+import { JWT_CONFIG, BCRYPT_SALT_ROUNDS, BCRYPT_TOKEN_SALT_ROUNDS, JwtPayload, TokenPair } from "@/core";
 
 const JWT_ACCESS_SECRET = process.env.JWT_ACCESS_SECRET || "access-secret";
 const JWT_REFRESH_SECRET = process.env.JWT_REFRESH_SECRET || "refresh-secret";

@@ -6,10 +6,8 @@ import {
     verifyRefreshToken,
     compareToken,
 } from "@/lib/auth";
-import { LoginInput, RefreshInput } from "@/validators/auth.validator";
-import { UserResponse, AuthResponse, TokenPair, ServiceError } from "@/types";
-
-export { ServiceError };
+import { LoginInput, RefreshInput } from "./auth.validator";
+import { UserResponse, AuthResponse, TokenPair, ServiceError } from "@/core";
 
 export const authService = {
     async login(input: LoginInput): Promise<AuthResponse> {

@@ -1,5 +1,5 @@
 import { NextResponse } from "next/server";
-import { ApiResponse } from "@/types";
+import { ApiResponse } from "./types";
 
 export function successResponse<T>(
     data: T,
