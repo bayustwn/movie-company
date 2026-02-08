@@ -1,8 +1,10 @@
+export type UserRole = "ADMIN" | "STAFF";
+
 export interface UserResponse {
     id: string;
     email: string;
     name: string;
-    role: string;
+    role: UserRole;
     createdAt?: Date;
     updatedAt?: Date;
 }

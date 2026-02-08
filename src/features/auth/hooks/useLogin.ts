@@ -13,8 +13,10 @@ export function useLogin() {
     return useMutation({
         mutationFn: (credentials: LoginCredentials) => authFetch("/api/auth/login", credentials),
         onSuccess: (data) => {
-            login(data.data.user, data.data.accessToken, data.data.refreshToken);
-            router.push("/dashboard");
+            if (data.data) {
+                login(data.data.user, data.data.accessToken, data.data.refreshToken);
+                router.push("/dashboard");
+            }
         },
     });
 }

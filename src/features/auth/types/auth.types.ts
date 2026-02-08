@@ -1,21 +1,16 @@
+import { ApiResponse, AuthResponse as CoreAuthResponse, UserRole } from "@/core/types";
+
 export interface User {
     id: string;
     email: string;
     name: string;
-    role: "ADMIN" | "STAFF";
+    role: UserRole;
 }
 
-export interface AuthResponse {
-    success: boolean;
-    message: string;
-    data: {
-        user: User;
-        accessToken: string;
-        refreshToken: string;
-    };
-}
+export type AuthResponse = ApiResponse<CoreAuthResponse>;
 
 export interface LoginCredentials {
     email: string;
     password: string;
+    rememberMe?: boolean;
 }
